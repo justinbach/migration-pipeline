@@ -20,13 +20,13 @@ python3 -m venv venv
 source venv/bin/activate
 
 # Install dependencies
-pip install anthropic playwright
+pip install anthropic playwright python-dotenv
 
 # Install browser for Playwright
 playwright install chromium
 
-# Set your Anthropic API key
-export ANTHROPIC_API_KEY="your-key-here"
+# Create .env file with your API key
+echo 'ANTHROPIC_API_KEY=your-key-here' > .env
 ```
 
 ## Usage
@@ -34,8 +34,10 @@ export ANTHROPIC_API_KEY="your-key-here"
 ### Step 1: Capture a page
 
 ```bash
-python capture.py "https://example.com/some-page"
+python capture.py "<target-url>"
 ```
+
+**Note:** Include the full URL with any query parameters—some sites route differently based on campaign params or other query string values.
 
 This creates a `captures/` directory with:
 - `screenshot.png` - Full-page screenshot

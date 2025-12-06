@@ -18,8 +18,14 @@ import sys
 import json
 import os
 from datetime import datetime
+from pathlib import Path
 from urllib.parse import urlparse
+
+from dotenv import load_dotenv
 from playwright.sync_api import sync_playwright
+
+# Load .env file from project root
+load_dotenv(Path(__file__).parent / ".env")
 
 
 def capture_page(url: str, output_dir: str = "captures") -> dict:
