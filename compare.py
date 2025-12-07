@@ -260,9 +260,30 @@ def analyze_sections(source: Image, generated: Image, num_sections: int = 5) -> 
     return sections
 
 
+def capture_angular_output(output_path: str) -> bool:
+    """Capture fresh screenshot from Angular dev server."""
+    try:
+        from playwright.sync_api import sync_playwright
+        
+        print("Capturing fresh Angular output...")
+        with sync_playwright() as p:
+            browser = p.chromium.launch()
+            page = browser.new_page(viewport={"width": 1440, "height": 900})
+            page.goto("http://localhost:4200", wait_until="domcontentloaded")
+            page.wait_for_timeout(3000)
+            page.screenshot(path=output_path, full_page=True)
+            browser.close()
+        return True
+    except Exception as e:
+        print(f"Could not capture Angular output: {e}")
+        print("Using existing screenshot if available...")
+        return False
+
+
 def main():
     parser = argparse.ArgumentParser(description="Compare source and generated screenshots")
     parser.add_argument("--captures-dir", default="captures", help="Directory containing screenshots")
+    parser.add_argument("--no-capture", action="store_true", help="Skip capturing fresh Angular output")
     args = parser.parse_args()
     
     check_dependencies()
@@ -274,9 +295,13 @@ def main():
         print(f"Error: Source screenshot not found at {source_path}")
         sys.exit(1)
     
+    # Capture fresh Angular output unless skipped
+    if not args.no_capture:
+        capture_angular_output(generated_path)
+    
     if not os.path.exists(generated_path):
         print(f"Error: Generated screenshot not found at {generated_path}")
-        print("Run: ng serve (in angular-app/) and then capture the output")
+        print("Make sure Angular is running (ng serve) or use --no-capture with existing screenshot")
         sys.exit(1)
     
     print("Loading images...")
