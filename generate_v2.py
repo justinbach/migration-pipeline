@@ -149,30 +149,44 @@ SOURCE CSS (from original page - use as styling reference):
 
 I'm also showing you a SCREENSHOT of the original page. Find the section corresponding to "{component_type}" and match its appearance as closely as possible.
 
-Requirements:
-1. Create a standalone Angular 17+ component
-2. Use @Input() data to receive the component data
-3. Match the SOURCE styling as closely as possible:
-   - Same colors (extract hex values from the CSS)
-   - Same spacing and layout
-   - Same typography
-   - Same visual hierarchy
-4. Use SCSS with actual values (no CSS variables unless defined)
-5. Make it responsive
-6. Handle missing data gracefully with @if
+CRITICAL ANGULAR SYNTAX RULES - FOLLOW EXACTLY:
+1. Use ONLY the new Angular control flow syntax:
+   - Use @if (condition) {{ }} - NOT *ngIf
+   - Use @for (item of items; track $index) {{ }} - NOT *ngFor
+   - Use @else {{ }} after @if blocks when needed
+2. NEVER use Math, parseInt, parseFloat, or any global in templates - create component methods instead
+3. The @Input() data property must be typed as: @Input() data: any = null;
+4. Inside @if (data) blocks, you can access data.property directly without optional chaining
+5. For @for loops, always use "track $index" or "track item.id"
+6. Every opening {{ must have a matching closing }}
+7. Do NOT mix *ngIf/*ngFor with @if/@for - use ONLY @if/@for
+
+COMPONENT STRUCTURE:
+```typescript
+import {{ Component, Input }} from '@angular/core';
+
+@Component({{
+  selector: 'app-{kebab_name}',
+  standalone: true,
+  imports: [],
+  templateUrl: './{kebab_name}.component.html',
+  styleUrls: ['./{kebab_name}.component.scss']
+}})
+export class {pascal_name} {{
+  @Input() data: any = null;
+  
+  // Add helper methods here for any logic needed in template
+}}
+```
 
 Return JSON in this exact format:
 {{
   "ts": "// Complete TypeScript - must compile without errors",
-  "html": "<!-- Complete HTML template -->",
+  "html": "<!-- Complete HTML template using ONLY @if/@for syntax -->",
   "scss": "/* Complete SCSS styles */"
 }}
 
-IMPORTANT: 
-- The code must be complete and working
-- Use Angular's new control flow syntax (@if, @for) not *ngIf/*ngFor
-- Include all necessary imports
-- Match the visual design from the screenshot precisely"""
+Match the visual design from the screenshot as closely as possible."""
 
     max_retries = 3
     for attempt in range(max_retries):
